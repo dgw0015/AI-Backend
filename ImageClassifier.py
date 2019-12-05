@@ -47,13 +47,13 @@ X_test /= 255.0
 
 model = Sequential()
 model.add(Conv2D(128, (3, 3), padding='same', input_shape=X_train.shape[1:]))
-model.add(Activation('elu'))
+model.add(Activation('relu'))
 model.add(Conv2D(128, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Conv2D(256, (3, 3), padding='same'))
-model.add(Activation('elu'))
+model.add(Activation('relu'))
 model.add(Conv2D(256, (3, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -78,14 +78,11 @@ model.summary()
 opt = SGD(lr=learning_rate, momentum=momentum_rate, decay=decay_rate, nesterov=True)
 model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['acc'])
 
-file = model_name
-ckeckpoint = ModelCheckpoint(filepath=file, monitor='loss', verbose=1, save_best_only=True, mode='min')
+ckeckpoint = ModelCheckpoint(filepath=model_name, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks = [ckeckpoint]
 
 training_history = model.fit(X_train, y_train, batch_size=batch_size, epochs=num_epoch, verbose=1,
-                             validation_data=(X_train, y_train), ca)
-
-
+                             validation_data=(X_train, y_train), callbacks=callbacks)
 
 # Data augmentation.
 datagen = ImageDataGenerator(featurewise_center=False, samplewise_center=False,
@@ -101,7 +98,7 @@ datagen.fit(X_train)
 
 training_history_datagen = model.fit_generator(datagen.flow(X_train, y_train, batch_size=batch_size),
                                                steps_per_epoch=X_train.shape[0] // batch_size,
-                                               epochs=num_epoch)
+                                               epochs=num_epoch, callbacks=callbacks)
 
 #
 validation.append(model.evaluate_generator(datagen.flow(X_test, y_test, batch_size=batch_size),
