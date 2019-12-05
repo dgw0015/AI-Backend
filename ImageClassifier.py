@@ -19,8 +19,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 model_name = 'cifar100.h5'
 validation = []
-predictions = 20
-batch_size = 60
+predictions = 40
+batch_size = 100
 num_classes = 100
 num_epoch = 1
 dropout_rate = 0.2
