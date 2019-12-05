@@ -82,11 +82,12 @@ file = model_name
 ckeckpoint = ModelCheckpoint(filepath=file, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks = [ckeckpoint]
 
-# training_history = model.fit(X_train, y_train, batch_size=batch_size, epochs=num_epoch, verbose=1,
-#                              validation_data=(X_train, y_train),
-#                              shuffle=True)
+training_history = model.fit(X_train, y_train, batch_size=batch_size, epochs=num_epoch, verbose=1,
+                             validation_data=(X_train, y_train), ca)
 
-print('With data augmentation')
+
+
+# Data augmentation.
 datagen = ImageDataGenerator(featurewise_center=False, samplewise_center=False,
                              featurewise_std_normalization=False, samplewise_std_normalization=False,
                              zca_whitening=False,
@@ -98,15 +99,17 @@ datagen = ImageDataGenerator(featurewise_center=False, samplewise_center=False,
 
 datagen.fit(X_train)
 
-training_history = model.fit_generator(datagen.flow(X_train, y_train, batch_size=batch_size),
-                                       steps_per_epoch=X_train.shape[0] // batch_size,
-                                       epochs=num_epoch)
+training_history_datagen = model.fit_generator(datagen.flow(X_train, y_train, batch_size=batch_size),
+                                               steps_per_epoch=X_train.shape[0] // batch_size,
+                                               epochs=num_epoch)
 
 #
 validation.append(model.evaluate_generator(datagen.flow(X_test, y_test, batch_size=batch_size),
                                            steps=X_test.shape[0] // batch_size, verbose=1))
 
 pkl.dump(validation, open("loss_validation.p", 'wb'))
+
+# save new model weights at the end of each training session.
 model.save_weights(model_name, overwrite=True)
 
 # Load the label names to the prediction results to pass to the poetry generator for poem selection.
