@@ -2,8 +2,7 @@
 # coding: utf-8
 
 # In[1]:
-
-
+from IPython.conftest import get_ipython
 from keras.applications.vgg16 import VGG16
 model = VGG16()
 
@@ -28,7 +27,6 @@ model = VGG16()
 
 
 from keras.preprocessing.image import load_img
-# load an image from file
 image = load_img('images/mug.png', target_size=(224, 224))
 
 

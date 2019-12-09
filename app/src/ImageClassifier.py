@@ -15,7 +15,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 num_classes = 100
 batch_size = 100
-num_epoch = 1
+num_epoch = 5
 validation = []
 predictions = 40
 model_name = 'cifar100.h5'
@@ -60,29 +60,13 @@ model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accur
 ckeckpoint = ModelCheckpoint(filepath=model_name, monitor='loss', verbose=1, save_best_only=True, mode='min')
 callbacks = [ckeckpoint]
 
-# Data augmentation
 history = model.fit(train_images, train_labels,
                     batch_size=batch_size, epochs=num_epoch, callbacks=callbacks, verbose=1)
 
-datagen = ImageDataGenerator(featurewise_center=False, samplewise_center=False,
-                             featurewise_std_normalization=False,
-                             samplewise_std_normalization=False,
-                             zca_whitening=False,
-                             width_shift_range=0.1,
-                             height_shift_range=0.1,
-                             horizontal_flip=True,
-                             vertical_flip=False)
 
-datagen.fit(train_images)
-batch_size = 128
-history2 = model.fit_generator(datagen.flow(train_images, train_labels, batch_size=batch_size),
-                               validation_data=(test_images, test_labels),
-                               steps_per_epoch=train_images.shape[0] // batch_size,
-                               epochs=num_epoch, callbacks=callbacks)
-
-validation.append(model.evaluate_generator(datagen.flow(test_images, test_labels, batch_size=batch_size),
-                                           steps=test_images.shape[0] // batch_size,
-                                           verbose=0))
+validation.append(model.evaluate(test_images, test_labels, batch_size=batch_size,
+                                 steps=test_images.shape[0] // batch_size,
+                                 verbose=0))
 
 pkl.dump(validation, open("loss_validation.p", 'wb'))
 
@@ -100,26 +84,19 @@ with open(label_list_path, mode='rb') as f:
 
 # Evaluate model with test data set and share prediction results.
 print('\nStarting model evaluation.')
-evaluation = model.evaluate_generator(datagen.flow(test_images, test_labels, batch_size=batch_size),
-                                      steps=test_images.shape[0] // batch_size, verbose=1)
+evaluation = model.evaluate(test_images, test_labels, batch_size=batch_size,
+                            steps=test_images.shape[0] // batch_size, verbose=1)
 
 # plot loss during training
 plt.title('Multi-Class Cross-Entropy Loss')
-plt.plot(history2.history['loss'], 'b', label='train')
-plt.plot(history2.history['val_loss'], 'r', label='test')
+plt.plot(history.history['loss'], 'b', label='train')
+plt.plot(history.history['val_loss'], 'r', label='test')
 plt.legend()
 plt.show()
 
-# plot accuracy during training
-plt.title('Loss with Image Augmentation')
-plt.plot(history2.history['loss'], 'r', label='train')
-plt.plot(history2.history['val_loss'], 'k', label='test')
-plt.legend(['Training Loss', 'Test Validation Loss'])
-plt.show()
-
 plt.title('Accuracy with Image Augmentation')
-plt.plot(history2.history['accuracy'], 'b', label='train')
-plt.plot(history2.history['val_accuracy'], 'g', label='test')
+plt.plot(history.history['accuracy'], 'b', label='train')
+plt.plot(history.history['val_accuracy'], 'g', label='test')
 plt.legend(['Training Accuracy', 'Test Validation Accuracy'])
 plt.show()
 
@@ -127,7 +104,7 @@ plt.show()
 print('Exact Test Accuracy', evaluation[1])
 # Prints the models current accuracy after all training epochs.
 print('Models Accuracy = %.2f' % (evaluation[1]))
-predict_gen = model.predict_generator(datagen.flow(test_images, test_labels, batch_size=batch_size),
+predict_gen = model.predict_generator(test_images, test_labels, batch_size=batch_size,
                                       steps=test_images.shape[0] // batch_size, verbose=1)
 
 for predict_index, predicted_y in enumerate(predict_gen):

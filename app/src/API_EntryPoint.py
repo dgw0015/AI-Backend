@@ -1,5 +1,6 @@
 import h5py
 from keras.models import load_model
+from keras.preprocessing.image import load_img
 from scipy import misc
 import tensorflow as tf
 from flask import Flask, request
@@ -31,14 +32,14 @@ def imageClassify(image_in_from_url, model):
 
 
 # GET poem based off image in.
-@app.route('/image_prediction/', methods=['GET', 'POST'])
+@app.route('/imageIn', methods=['GET', 'POST'])
 def getPoemBasedOffImg():
     model_name = 'cifar100.h5'
     model = load_model(model_name)
 
     try:
         image = io.imread(request.form['image_url'])
-        reshape_image = misc.imresize(image, (32, 32, 3)) / 255.
+        reshape_image = load_img(image, target_size=(224, 224))
         prediction = imageClassify(reshape_image, model)
         data = [{'name': x} for x in zip(prediction.iloc[:, 1], prediction.iloc[:, 0])]
     except:
