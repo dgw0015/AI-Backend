@@ -29,7 +29,7 @@ model = VGG16()
 
 from keras.preprocessing.image import load_img
 # load an image from file
-image = load_img('mug.png', target_size=(224, 224))
+image = load_img('images/mug.png', target_size=(224, 224))
 
 
 # In[12]:
@@ -91,7 +91,7 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 
 
 # Read text file into dataframe and split songs into rows
-df = pd.DataFrame({'lyrics': io.open('poem.txt', 'r', encoding='ascii', errors='ignore').read().split('\n\n')})
+df = pd.DataFrame({'lyrics': io.open('../../poem.txt', 'r', encoding='ascii', errors='ignore').read().split('\n\n')})
 
 
 # In[20]:

@@ -8,7 +8,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
-from keras.optimizers import SGD, Adam
 from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 
@@ -104,20 +103,6 @@ print('\nStarting model evaluation.')
 evaluation = model.evaluate_generator(datagen.flow(test_images, test_labels, batch_size=batch_size),
                                       steps=test_images.shape[0] // batch_size, verbose=1)
 
-print('Exact Test Accuracy', evaluation[1])
-
-# Prints the models current accuracy after all training epochs.
-print('Models Accuracy = %.2f' % (evaluation[1]))
-predict_gen = model.predict_generator(datagen.flow(test_images, test_labels, batch_size=batch_size),
-                                      steps=test_images.shape[0] // batch_size, verbose=1)
-
-for predict_index, predicted_y in enumerate(predict_gen):
-    actual_label = labels['fine_label_names'][np.argmax(test_labels[predict_index])]
-    predicted_label = labels['fine_label_names'][np.argmax(predicted_y)]
-    print('Actual = %s vs. Model Prediction = %s' % (actual_label, predicted_label))
-    if predict_index == predictions:
-        break
-
 # plot loss during training
 plt.title('Multi-Class Cross-Entropy Loss')
 plt.plot(history2.history['loss'], 'b', label='train')
@@ -130,9 +115,26 @@ plt.title('Loss with Image Augmentation')
 plt.plot(history2.history['loss'], 'r', label='train')
 plt.plot(history2.history['val_loss'], 'k', label='test')
 plt.legend(['Training Loss', 'Test Validation Loss'])
+plt.show()
 
-plt.subplot('Accuracy with Image Augmentation')
+plt.title('Accuracy with Image Augmentation')
 plt.plot(history2.history['accuracy'], 'b', label='train')
 plt.plot(history2.history['val_accuracy'], 'g', label='test')
 plt.legend(['Training Accuracy', 'Test Validation Accuracy'])
 plt.show()
+
+
+print('Exact Test Accuracy', evaluation[1])
+# Prints the models current accuracy after all training epochs.
+print('Models Accuracy = %.2f' % (evaluation[1]))
+predict_gen = model.predict_generator(datagen.flow(test_images, test_labels, batch_size=batch_size),
+                                      steps=test_images.shape[0] // batch_size, verbose=1)
+
+for predict_index, predicted_y in enumerate(predict_gen):
+    actual_label = labels['fine_label_names'][np.argmax(test_labels[predict_index])]
+    predicted_label = labels['fine_label_names'][np.argmax(predicted_y)]
+    print('Actual = %s vs. Model Prediction = %s' % (actual_label, predicted_label))
+    if predict_index == predictions:
+        break
+
+
