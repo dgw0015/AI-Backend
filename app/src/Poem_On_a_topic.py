@@ -36,7 +36,7 @@ df['lexical_density'] = df['#uniq_words'] / df['#words']
 
 
 # Now that we have text metrics, a quick histogram spread on all metrics.
-df.hist(sharey=True, layout=(2, 3), figsize=(15, 8));
+df.hist(sharey=True, layout=(2, 3), figsize=(15, 8))
 
 # In[53]:
 
