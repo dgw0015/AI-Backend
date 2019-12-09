@@ -12,6 +12,7 @@
       <w>imagenet</w>
       <w>imshow</w>
       <w>keras</w>
+      <w>lgrams</w>
       <w>relu</w>
       <w>softmax</w>
       <w>xlabel</w>
