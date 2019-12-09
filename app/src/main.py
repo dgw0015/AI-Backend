@@ -91,7 +91,7 @@ get_ipython().run_line_magic('matplotlib', 'inline')
 
 
 # Read text file into dataframe and split songs into rows
-df = pd.DataFrame({'lyrics': io.open('../../poem.txt', 'r', encoding='ascii', errors='ignore').read().split('\n\n')})
+df = pd.DataFrame({'lyrics': io.open('poem.txt', 'r', encoding='ascii', errors='ignore').read().split('\n\n')})
 
 
 # In[20]:
